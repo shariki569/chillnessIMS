@@ -4,9 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import { NavigationContainer } from "@react-navigation/native";
+import Homescreen from "../screens/Homescreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import BottomTabs from "../components/BottomTabs";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -18,6 +23,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Main"
+          component={BottomTabs}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

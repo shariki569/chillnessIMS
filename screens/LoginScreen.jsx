@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Pressable,
@@ -8,15 +9,30 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons, Fontisto } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const navigate = useNavigation();
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        if(token){
+          navigate.replace("Main");
+        }
+      } catch (error) {
+        console.log("Error checking token", error);
+      }
+    }
+    checkToken();
+  }, []);
 
   const handleLogin = async () => {
     const user = {
@@ -24,11 +40,19 @@ const LoginScreen = () => {
       password: password,
     };
     try {
-     const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}login`, user);
-     console.log(response);
-     const token = response.data.token;
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}login`,
+        user
+      );
+      console.log(response);
+      const token = response.data.token;
+      AsyncStorage.setItem("authToken", token);
+      navigate.replace("Main");
     } catch (error) {
-      console.log
+      Alert.alert("Error", error.response.data.message);
+      console.log(error);
+    } finally {
+      Alert.alert("Login Successful");
     }
   };
 
@@ -62,7 +86,7 @@ const LoginScreen = () => {
             />
             <TextInput
               value={email}
-              onChange={(text) => setEmail(text)}
+              onChangeText={(text) => setEmail(text)}
               style={[styles.textInput, { fontSize: email ? 18 : 18 }]}
               placeholder="Enter your e-mail"
             />
@@ -78,7 +102,7 @@ const LoginScreen = () => {
             />
             <TextInput
               value={password}
-              onChange={(text) => setPassword(text)}
+              onChangeText={(text) => setPassword(text)}
               secureTextEntry={true}
               style={[styles.textInput, { fontSize: email ? 18 : 18 }]}
               placeholder="Enter your password"

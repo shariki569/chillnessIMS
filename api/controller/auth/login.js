@@ -1,5 +1,7 @@
-import User from "../models/user";
-import { secretKey } from "../utilities/secretKey";
+
+import User from "../../models/user.js";
+import { secretKey } from "../../utilities/secretKey.js";
+import jwt from "jsonwebtoken";
 
 export const loginUser = async (req, res) => {
   try {
@@ -18,6 +20,6 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: user.id }, secretKey);
     res.status(200).json({ token });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: error.message });
   }
 };

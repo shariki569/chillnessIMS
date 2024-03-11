@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import registerUser from './routes/register.js';
+import loginUser from './routes/login.js';
 
 const app = express();
 app.use(cors());
@@ -14,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //Server Actions
 app.use('/api/register', registerUser);
-
+app.use('/api/login', loginUser);
 
 mongoose
   .connect(
