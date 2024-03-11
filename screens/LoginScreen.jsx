@@ -50,7 +50,7 @@ const LoginScreen = () => {
 
       <KeyboardAvoidingView>
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.headingText}>Login to your account</Text>
+          <Text style={styles.headingText}>Login to your account please</Text>
         </View>
         <View style={{ marginTop: 60 }}>
           <View style={styles.textContainer}>
