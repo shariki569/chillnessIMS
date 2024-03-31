@@ -34,8 +34,8 @@ app.get("/api", (req, res) => {
   res.send("API is running");
 })
 
-app.listen('8888', '192.168.0.103', () => {
-  console.log(`Server is running on port http://192.168.0.103:8888`);
+app.listen('8080', '192.168.1.11', () => {
+  console.log(`Server is running`);
 });
 
 

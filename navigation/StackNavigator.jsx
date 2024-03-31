@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
+
 import { NavigationContainer } from "@react-navigation/native";
-import Homescreen from "../screens/Homescreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BottomTabs from "../components/BottomTabs";
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();

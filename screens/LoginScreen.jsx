@@ -1,6 +1,7 @@
 import {
   Alert,
   Image,
+  ImageBackground,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
@@ -11,15 +12,17 @@ import {
 import { MaterialIcons, Fontisto } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { colors } from "../assets/colorPallette";
+import PrimaryButton from "../components/PrimaryButton";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigation();
-
+const route = useRoute();
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -57,104 +60,142 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <View>
-        <Image
-          style={{ width: 100, height: 100 }}
-          source={require("../assets/ChillnessLogo.png")}
-        />
-      </View>
-
-      <KeyboardAvoidingView>
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.headingText}>Login to your account please</Text>
-        </View>
-        <View style={{ marginTop: 60 }}>
-          <View style={styles.textContainer}>
-            <MaterialIcons
-              style={{ marginLeft: 8, color: "#899584" }}
-              name="email"
-              size={24}
-              color="black"
-            />
-            <TextInput
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              style={[styles.textInput, { fontSize: email ? 18 : 18 }]}
-              placeholder="Enter your e-mail"
+    <SafeAreaView className="flex-1 items-center justify-center ">
+      <ImageBackground
+        source={require("../assets/background-1.png")}
+        style={{
+          flex: 1,
+          resizeMode: "cover",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <View className="bg-white m-7 rounded-3xl item-center justify-center flex-col px-5 py-7">
+          <View className="flex-row item-center justify-center">
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={require("../assets/ChillnessLogo.png")}
             />
           </View>
-        </View>
-        <View style={{ marginTop: 5 }}>
-          <View style={styles.textContainer}>
-            <MaterialIcons
-              style={{ marginLeft: 8, color: "#899584" }}
-              name="lock"
-              size={24}
-              color="black"
-            />
-            <TextInput
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry={true}
-              style={[styles.textInput, { fontSize: email ? 18 : 18 }]}
-              placeholder="Enter your password"
-            />
-          </View>
-        </View>
-        <View
-          style={{
-            marginTop: 12,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text>Keep me logged in</Text>
-          <Text style={{ color: "#abe093", fontWeight: "bold" }}>
-            Forgot password
-          </Text>
-        </View>
-        <View style={{ marginTop: 80 }} />
+          <KeyboardAvoidingView>
+          
+            <View className="flex-row justify-center items-center  pt-6 pb-3">
+            <PrimaryButton
+                onPress={() => navigate.navigate("Register")}
+                text={"Login"}
+                style={"w-[50%] m-1 "}
+                solid={route.name === "Login" ? true : false}
+              />
+              <PrimaryButton
+                onPress={() => navigate.navigate("Register")}
+                text={"Register"}
+                style={"w-[50%] m-1 "}
+              />
+              
+              {/* <Pressable
+               
+                onPress={() => navigate.navigate("Register")}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "#899584",
+                    fontSize: 15,
+                  }}
+                >
+                  Register
+                </Text>
+              </Pressable>
+              <Pressable
+             
+                onPress={() => navigate.navigate("Register")}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "#899584",
+                    fontSize: 15,
+                  }}
+                >
+                  Register
+                </Text>
+              </Pressable> */}
+            </View>
 
-        <Pressable
-          onPress={handleLogin}
-          style={{
-            width: 200,
-            backgroundColor: "#8cd64c",
-            borderRadius: 10,
-            marginLeft: "auto",
-            marginRight: "auto",
-            padding: 15,
-          }}
-        >
-          <Text
-            style={{
-              textAlign: "center",
-              color: "#1a320f",
-              fontSize: 16,
-              fontWeight: "bold",
-            }}
-          >
-            Login
-          </Text>
-        </Pressable>
-        <Pressable
-          style={{ marginTop: 15 }}
-          onPress={() => navigate.navigate("Register")}
-        >
-          <Text style={{ textAlign: "center", color: "#899584", fontSize: 16 }}>
-            Don't have an account? Sign Up
-          </Text>
-        </Pressable>
-      </KeyboardAvoidingView>
+            <View className="mt-2">
+              <View style={styles.textContainer}>
+                <MaterialIcons
+                  style={{ marginLeft: 8, color: "#899584" }}
+                  name="email"
+                  size={24}
+                  color="black"
+                />
+                <TextInput
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  style={[styles.textInput, { fontSize: email ? 15 : 15 }]}
+                  placeholder="Enter your e-mail"
+                />
+              </View>
+            </View>
+            <View className="mt-2">
+              <View style={styles.textContainer}>
+                <MaterialIcons
+                  style={{ marginLeft: 8, color: "#899584" }}
+                  name="lock"
+                  size={24}
+                  color="black"
+                />
+                <TextInput
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  secureTextEntry={true}
+                  style={[styles.textInput, { fontSize: email ? 15 : 15 }]}
+                  placeholder="Enter your password"
+                />
+              </View>
+            </View>
+            <View style={{ marginTop: 30 }} />
+
+            {/* <Pressable
+              onPress={handleLogin}
+              className="rounded-3xl mx-auto"
+              style={{
+                width: 300,
+                backgroundColor: "#8cd64c",
+                padding: 15,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#1a320f",
+                  fontSize: 15,
+                  fontWeight: "bold",
+                }}
+              >
+                Login
+              </Text>
+            </Pressable> */}
+            <PrimaryButton onPress={handleLogin} text={"Login"} solid={true} style={"w-full m-"}/>
+            <View
+              style={{
+                marginTop: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text>Keep me logged in</Text>
+              <Text style={{ color: "#abe093", fontWeight: "bold" }}>
+                Forgot password
+              </Text>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -165,7 +206,7 @@ const styles = StyleSheet.create({
   headingText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 12,
+    marginTop: 10,
     color: "#899584",
   },
   textInput: {
@@ -173,13 +214,16 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: 300,
     color: "#899584",
+    width: 250,
+    marginLeft: 12,
   },
   textContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: 3,
     backgroundColor: "#fbfbfb",
     paddingVertical: 5,
+    marginHorizontal: 1,
     borderRadius: 15,
     marginTop: 10,
   },

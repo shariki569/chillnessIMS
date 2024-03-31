@@ -1,6 +1,7 @@
 import {
   Alert,
   Image,
+  ImageBackground,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
@@ -11,14 +12,16 @@ import {
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, Fontisto } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
+import PrimaryButton from "../components/PrimaryButton";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigation();
+  const route = useRoute();
 
   const handleRegister = async () => {
     try {
@@ -40,109 +43,111 @@ const RegisterScreen = () => {
         justifyContent: "center",
       }}
     >
-      <View>
-        <Image
-          style={{ width: 100, height: 100 }}
-          source={require("../assets/ChillnessLogo.png")}
-        />
-      </View>
+      <ImageBackground
+        source={require("../assets/background-1.png")}
+        style={{
+          flex: 1,
+          resizeMode: "cover",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <View className="bg-white m-7 rounded-3xl item-center justify-center flex-col px-5 py-7">
+          <View className="flex-row item-center justify-center">
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={require("../assets/ChillnessLogo.png")}
+            />
+          </View>
 
-      <KeyboardAvoidingView>
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.headingText}>Create an account</Text>
+          <KeyboardAvoidingView>
+            <View className="flex-row justify-center items-center  pt-6 pb-3">
+              <PrimaryButton
+                onPress={() => navigate.goBack()}
+                text={"Login"}
+                style={"w-[50%] m-1 "}
+              />
+              <PrimaryButton
+                onPress={() => navigate.goBack()}
+                text={"Register"}
+                style={"w-[50%] m-1 "}
+                solid={route.name === "Register" ? true : false}
+              />
+            </View>
+            <View className="mt-2">
+              <View style={styles.textContainer}>
+                <MaterialIcons
+                  style={{ marginLeft: 8, color: "#899584" }}
+                  name="account-circle"
+                  size={24}
+                  color="black"
+                />
+                <TextInput
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  style={[styles.textInput, { fontSize: name ? 15 : 15 }]}
+                  placeholder="Enter your name"
+                />
+              </View>
+            </View>
+            <View className="mt-2">
+              <View style={styles.textContainer}>
+                <MaterialIcons
+                  style={{ marginLeft: 8, color: "#899584" }}
+                  name="email"
+                  size={24}
+                  color="black"
+                />
+                <TextInput
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  style={[styles.textInput, { fontSize: email ? 15 : 15 }]}
+                  placeholder="Enter your email"
+                />
+              </View>
+            </View>
+            <View className="mt-2">
+              <View style={styles.textContainer}>
+                <MaterialIcons
+                  style={{ marginLeft: 8, color: "#899584" }}
+                  name="lock"
+                  size={24}
+                  color="black"
+                />
+                <TextInput
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  secureTextEntry={true}
+                  style={[styles.textInput, { fontSize: email ? 15 : 15 }]}
+                  placeholder="Enter your password"
+                />
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text>Keep me logged in</Text>
+              <Text style={{ color: "#abe093", fontWeight: "bold" }}>
+                Forgot password
+              </Text>
+            </View>
+            <View style={{ marginTop: 30 }} />
+            <PrimaryButton
+              onPress={handleRegister}
+              text={"Register"}
+              style={"w-full"}
+              solid
+            />
+          </KeyboardAvoidingView>
         </View>
-        <View style={{ marginTop: 60 }}>
-          <View style={styles.textContainer}>
-            <MaterialIcons
-              style={{ marginLeft: 8, color: "#899584" }}
-              name="account-circle"
-              size={24}
-              color="black"
-            />
-            <TextInput
-              value={name}
-              onChangeText={(text) => setName(text)}
-              style={[styles.textInput, { fontSize: name ? 18 : 18 }]}
-              placeholder="Enter your name"
-            />
-          </View>
-        </View>
-        <View style={{ marginTop: 5 }}>
-          <View style={styles.textContainer}>
-            <MaterialIcons
-              style={{ marginLeft: 8, color: "#899584" }}
-              name="email"
-              size={24}
-              color="black"
-            />
-            <TextInput
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              style={[styles.textInput, { fontSize: email ? 18 : 18 }]}
-              placeholder="Enter your email"
-            />
-          </View>
-        </View>
-        <View style={{ marginTop: 5 }}>
-          <View style={styles.textContainer}>
-            <MaterialIcons
-              style={{ marginLeft: 8, color: "#899584" }}
-              name="lock"
-              size={24}
-              color="black"
-            />
-            <TextInput
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry={true}
-              style={[styles.textInput, { fontSize: email ? 18 : 18 }]}
-              placeholder="Enter your password"
-            />
-          </View>
-        </View>
-        <View
-          style={{
-            marginTop: 12,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text>Keep me logged in</Text>
-          <Text style={{ color: "#abe093", fontWeight: "bold" }}>
-            Forgot password
-          </Text>
-        </View>
-        <View style={{ marginTop: 80 }} />
-
-        <Pressable
-          onPress={handleRegister}
-          style={{
-            width: 200,
-            backgroundColor: "#8cd64c",
-            borderRadius: 10,
-            marginLeft: "auto",
-            marginRight: "auto",
-            padding: 15,
-          }}
-        >
-          <Text
-            style={{
-              textAlign: "center",
-              color: "#1a320f",
-              fontSize: 16,
-              fontWeight: "bold",
-            }}
-          >
-            Register
-          </Text>
-        </Pressable>
-        <Pressable style={{ marginTop: 15 }} onPress={() => navigate.goBack()}>
-          <Text style={{ textAlign: "center", color: "#899584", fontSize: 16 }}>
-            Already have an account? Sign In
-          </Text>
-        </Pressable>
-      </KeyboardAvoidingView>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -159,7 +164,7 @@ const styles = StyleSheet.create({
   textInput: {
     color: "grey",
     marginVertical: 10,
-    width: 300,
+    width: 250,
     color: "#899584",
   },
   textContainer: {
@@ -168,6 +173,7 @@ const styles = StyleSheet.create({
     gap: 5,
     backgroundColor: "#fbfbfb",
     paddingVertical: 5,
+    marginHorizontal: 1,
     borderRadius: 15,
     marginTop: 10,
   },
