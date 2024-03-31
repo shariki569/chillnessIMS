@@ -15,8 +15,10 @@ import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import ItemList from "../components/ItemList";
+import { useNavigation } from "@react-navigation/core";
 
 const Homescreen = () => {
+  const navigate = useNavigation();
   const list = [
     {
       name: "Milk Tea",
@@ -34,7 +36,7 @@ const Homescreen = () => {
 
   return (
     <SafeAreaView
-      style={{ paddingTop: Platform.OS === "android" ? 40 : 0 }}
+      style={{ paddingTop: Platform.OS === "android" ? 0 : 10 }}
       className="flex-1 bg-background"
     >
       <ScrollView>
@@ -56,10 +58,13 @@ const Homescreen = () => {
           <Pressable
             className="p-1 rounded-md"
             android_ripple={{ color: colors.primaryLight, borderless: true }}
+            onPress={() => navigate.navigate("AddProduct")}
           >
             <Feather name="plus" size={24} color="black" />
           </Pressable>
         </View>
+
+        
         <View className="flex-row items-center gap-1 py-2 px-4 bg-primary-light ">
           <Ionicons name="location-outline" size={20} color="black" />
           <Pressable>
@@ -87,7 +92,7 @@ const Homescreen = () => {
         </View>
 
         <View>
-          <Text className="text-center text-xl font-bold mt-2">Milk Tea</Text>
+          <Text className="text-center text-xl font-bold mt-2">Milk TeaTea</Text>
         </View>
         <ItemList/>
       </ScrollView>

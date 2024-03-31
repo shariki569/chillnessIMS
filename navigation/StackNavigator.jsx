@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BottomTabs from "../components/BottomTabs";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+import AddProductScreen from "../screens/AddProduct";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -23,6 +24,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddProduct"
+          component={AddProductScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

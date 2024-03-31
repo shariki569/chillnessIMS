@@ -179,7 +179,7 @@ const route = useRoute();
                 Login
               </Text>
             </Pressable> */}
-            <PrimaryButton onPress={handleLogin} text={"Login"} solid={true} style={"w-full m-"}/>
+            <PrimaryButton onPress={handleLogin} text={"Login"} solid={true} style={"w-full "}/>
             <View
               style={{
                 marginTop: 12,

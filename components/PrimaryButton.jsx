@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { colors } from "../assets/colorPallette";
 
 const PrimaryButton = ({ onPress, text, solid, style }) => {
   const buttonStyle = solid ? `bg-primary ` : `border-2 border-primary`;
@@ -10,8 +11,6 @@ const PrimaryButton = ({ onPress, text, solid, style }) => {
       onPress={onPress}
       className={`rounded-3xl mx-auto ${buttonStyle} ${style} `}
       style={{
-        // width: 300,
-        // backgroundColor: "#8cd64c",
         padding: 15,
       }}
     >

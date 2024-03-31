@@ -1,0 +1,126 @@
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../assets/colorPallette";
+import { useNavigation } from "@react-navigation/core";
+import PrimaryButton from "../components/PrimaryButton";
+import axios from "axios";
+
+const AddProduct = () => {
+  const [product, setProduct] = useState({
+    name: "",
+    quantity: 0,
+    price: 0,
+    description: "",
+    image: "",
+  });
+  const navigate = useNavigation();
+
+  const handleChange = (name, value) => {
+    setProduct({ ...product, [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      axios.post(`${process.env.EXPO_PUBLIC_API_URL}products`, product);
+      Alert.alert("Product Added");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <SafeAreaView>
+      <ScrollView>
+        <View className="bg-primary p-3 flex-row items-center justify-center">
+          <Pressable className="mr-auto" onPress={() => navigate.goBack()}>
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color={colors.primaryContent}
+            />
+          </Pressable>
+          <Text className="text-primary-content text-lg mr-auto">
+            Add New Item
+          </Text>
+        </View>
+        <View className="flex-1 m-7 p-5 items-center justify-center rounded-2xl bg-primary-light">
+          <View className="w-full">
+            <Text className="text-primary-content text-[16px] pb-2 mr-auto">
+              Product Name
+            </Text>
+            <TextInput
+              className="bg-white py-2 px-6 rounded-xl w-full"
+              value={product.name}
+              onChangeText={(text) => handleChange("name", text)}
+            />
+          </View>
+
+          <View className="w-full flex-row mt-2" style={{ gap: 10 }}>
+            <View style={{ width: "48%" }}>
+              <Text className="text-primary-content text-[16px] pb-2 mr-auto">
+                Quantity
+              </Text>
+              <TextInput
+                className="bg-white py-2 px-6 rounded-xl w-full"
+                value={product.quantity.toString()}
+                onChangeText={(text) => handleChange("quantity", text)}
+              />
+            </View>
+            <View style={{ width: "48%" }}>
+              <Text className="text-primary-content text-[16px] pb-2 mr-auto">
+                Price
+              </Text>
+              <TextInput
+                className="bg-white py-2 px-6 rounded-xl w-full "
+                value={product.price.toString()}
+                onChangeText={(text) => handleChange("price", text)}
+              />
+            </View>
+          </View>
+
+          <View className="w-full mt-2">
+            <Text className="text-primary-content text-[16px] pb-2 mr-auto">
+              Description
+            </Text>
+            <TextInput
+              className="bg-white py-2 px-6 rounded-xl w-full"
+              multiline={true}
+              numberOfLines={10}
+              value={product.description}
+              onChangeText={(text) => handleChange("description", text)}
+            />
+          </View>
+        </View>
+        <View className="mt-2 mx-7 ">
+          {/* <Pressable className="bg-primary-dark p-3 rounded-xl">
+                <Text className="text-background text-lg text-center">SAVE ITEM</Text>
+            </Pressable> */}
+          <PrimaryButton
+            text="SAVE ITEM"
+            solid={true}
+            style={"w-full"}
+            onPress={handleSubmit}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default AddProduct;
+
+const styles = StyleSheet.create({
+  iconPosition: {
+    marginRight: "auto",
+  },
+});
