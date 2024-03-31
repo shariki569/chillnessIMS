@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import { colors } from "../assets/colorPallette";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Homescreen from "../screens/Homescreen";
 
@@ -20,7 +20,7 @@ const BottomTabs = () => {
         />
       ),
       iconActive: (
-        <MaterialCommunityIcons name="home-variant" size={24} color="#6dc845" />
+        <MaterialCommunityIcons name="home-variant" size={24} color={colors.primaryDark} />
       ),
     },
     {
@@ -61,7 +61,7 @@ const BottomTabs = () => {
           options={{
             headerShown: false,
             tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? "#6dc845" : "#252923" }}>
+              <Text className={focused ? "text-primary" : "text-copy"}>
                 {item.name}
               </Text>
             ),
