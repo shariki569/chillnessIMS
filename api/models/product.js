@@ -1,14 +1,6 @@
 import { mongoose } from "mongoose";
 
 const productSchema = mongoose.Schema({
-  prodId: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    maxlength: 10,
-    default: "PROD" + Math.floor(Math.random() * 100000),
-  },
   prodImage: {
     type: String,
     default: "https://placehold.co/500",

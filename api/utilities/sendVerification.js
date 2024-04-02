@@ -1,11 +1,13 @@
 import nodemailer from "nodemailer";
 
+console.log(process.env.EMAIL + " " + process.env.PASSWORD);
+
 export const sendVerificatonEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "sepalonclintairol@gmail.com",
-      pass: "urjnnaekuxxhpzbi",
+      user: `${process.env.EMAIL}`,
+      pass: `${process.env.PASSWORD}`,
     },
   });
 

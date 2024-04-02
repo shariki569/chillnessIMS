@@ -14,6 +14,7 @@ import { colors } from "../assets/colorPallette";
 import { useNavigation } from "@react-navigation/core";
 import PrimaryButton from "../components/PrimaryButton";
 import axios from "axios";
+import { Button, Input } from "@ui-kitten/components";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -31,10 +32,18 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     try {
-      axios.post(`${process.env.EXPO_PUBLIC_API_URL}products`, product);
-      Alert.alert("Product Added");
+      await axios.post(`${process.env.EXPO_PUBLIC_API_URL}products`, product);
+      Alert.alert("Success", "Product added successfully");
+      setProduct({
+        name: "",
+        quantity: 0,
+        price: 0,
+        description: "",
+        image: "",
+      });
     } catch (err) {
       console.log(err);
+      Alert.alert("Error", err.response.data.message);
     }
   };
 
@@ -58,11 +67,17 @@ const AddProduct = () => {
             <Text className="text-primary-content text-[16px] pb-2 mr-auto">
               Product Name
             </Text>
-            <TextInput
-              className="bg-white py-2 px-6 rounded-xl w-full"
+            <Input
+              style={styles.input}
               value={product.name}
               onChangeText={(text) => handleChange("name", text)}
             />
+
+            {/* <TextInput
+              className="bg-white py-2 px-6 rounded-xl w-full"
+              value={product.name}
+              onChangeText={(text) => handleChange("name", text)}
+            /> */}
           </View>
 
           <View className="w-full flex-row mt-2" style={{ gap: 10 }}>
@@ -70,8 +85,8 @@ const AddProduct = () => {
               <Text className="text-primary-content text-[16px] pb-2 mr-auto">
                 Quantity
               </Text>
-              <TextInput
-                className="bg-white py-2 px-6 rounded-xl w-full"
+              <Input
+                style={styles.input}
                 value={product.quantity.toString()}
                 onChangeText={(text) => handleChange("quantity", text)}
               />
@@ -80,8 +95,8 @@ const AddProduct = () => {
               <Text className="text-primary-content text-[16px] pb-2 mr-auto">
                 Price
               </Text>
-              <TextInput
-                className="bg-white py-2 px-6 rounded-xl w-full "
+              <Input
+                style={styles.input}
                 value={product.price.toString()}
                 onChangeText={(text) => handleChange("price", text)}
               />
@@ -92,25 +107,27 @@ const AddProduct = () => {
             <Text className="text-primary-content text-[16px] pb-2 mr-auto">
               Description
             </Text>
-            <TextInput
+            <Input
+              textAlignVertical="top"
+              style={styles.input}
+              multiline={true}
+              textStyle={{ minHeight: 100 }}
+              value={product.description}
+              onChangeText={(text) => handleChange("description", text)}
+            />
+            {/* <TextInput
               className="bg-white py-2 px-6 rounded-xl w-full"
               multiline={true}
               numberOfLines={10}
               value={product.description}
               onChangeText={(text) => handleChange("description", text)}
-            />
+            /> */}
           </View>
         </View>
         <View className="mt-2 mx-7 ">
-          {/* <Pressable className="bg-primary-dark p-3 rounded-xl">
-                <Text className="text-background text-lg text-center">SAVE ITEM</Text>
-            </Pressable> */}
-          <PrimaryButton
-            text="SAVE ITEM"
-            solid={true}
-            style={"w-full"}
-            onPress={handleSubmit}
-          />
+          <Button style={{ borderRadius: 20 }} onPress={handleSubmit} size="large">
+            Add Item
+          </Button>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -123,4 +140,5 @@ const styles = StyleSheet.create({
   iconPosition: {
     marginRight: "auto",
   },
+  input: {padding: 2, borderRadius: 10},
 });

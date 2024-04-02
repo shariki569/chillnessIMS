@@ -8,7 +8,7 @@ export const addProducts = async (req, res) => {
       prodPrice: price,
       prodDescription: description,
       prodImage: image,
-      prodQuantity: quantity
+      prodQuantity: quantity,
     });
     await newProduct.save();
 
@@ -19,7 +19,6 @@ export const addProducts = async (req, res) => {
   }
 };
 
-
 export const getProducts = async (req, res) => {
   try {
     const products = await Product.find({ isDeleted: false });
@@ -27,4 +26,4 @@ export const getProducts = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
