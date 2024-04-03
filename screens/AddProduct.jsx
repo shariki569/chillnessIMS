@@ -1,10 +1,13 @@
 import {
   Alert,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState } from "react";
@@ -15,6 +18,9 @@ import { useNavigation } from "@react-navigation/core";
 import PrimaryButton from "../components/PrimaryButton";
 import axios from "axios";
 import { Button, Input } from "@ui-kitten/components";
+import * as ImagePicker from "expo-image-picker";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../firebaseConfig";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -23,7 +29,10 @@ const AddProduct = () => {
     price: 0,
     description: "",
     image: "",
+    uploading: false,
   });
+
+  const [refresh, setRefresh] = useState(false);
   const navigate = useNavigation();
 
   const handleChange = (name, value) => {
@@ -31,8 +40,30 @@ const AddProduct = () => {
   };
 
   const handleSubmit = async () => {
+    const resp = await fetch(product.image);
+    const blob = await resp.blob();
+    const storageRef = ref(storage, `chillnessImg/` + Date.now() + ".jpg");
+
     try {
-      await axios.post(`${process.env.EXPO_PUBLIC_API_URL}products`, product);
+      const snapshot = await uploadBytes(storageRef, blob);
+      console.log("Uploaded a blob or file");
+
+      const downloadUrl = await getDownloadURL(storageRef);
+      console.log(downloadUrl);
+
+      setProduct({ ...product, image: downloadUrl });
+
+      const productData = {
+        name: product.name,
+        quantity: product.quantity,
+        price: product.price,
+        description: product.description,
+        image: downloadUrl,
+      };
+      await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}products`,
+        productData
+      );
       Alert.alert("Success", "Product added successfully");
       setProduct({
         name: "",
@@ -44,6 +75,22 @@ const AddProduct = () => {
     } catch (err) {
       console.log(err);
       Alert.alert("Error", err.response.data.message);
+    }
+  };
+  //Pick image from gallery
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setProduct({ ...product, image: result.assets[0].uri });
     }
   };
 
@@ -124,8 +171,30 @@ const AddProduct = () => {
             /> */}
           </View>
         </View>
-        <View className="mt-2 mx-7 ">
-          <Button style={{ borderRadius: 20 }} onPress={handleSubmit} size="large">
+        <View></View>
+        <View className="mt-2 mx-7" style={{ gap: 10 }}>
+          <View>
+            <TouchableOpacity onPress={pickImage}>
+              {product.image ? (
+                <Image
+                  className="w-full"
+                  style={{ height: 200, borderRadius: 10 }}
+                  source={{ uri: product.image }}
+                />
+              ) : (
+                <Image
+                  className="w-full"
+                  style={{ height: 200, borderRadius: 10 }}
+                  source={require("../assets/image-placeholder.png")}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          <Button
+            style={{ borderRadius: 20 }}
+            onPress={handleSubmit}
+            size="large"
+          >
             Add Item
           </Button>
         </View>
@@ -140,5 +209,5 @@ const styles = StyleSheet.create({
   iconPosition: {
     marginRight: "auto",
   },
-  input: {padding: 2, borderRadius: 10},
+  input: { padding: 2, borderRadius: 10 },
 });

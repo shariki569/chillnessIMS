@@ -21,7 +21,11 @@ export const addProducts = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
+    // const products = await Product.find({ isDeleted: false });
     const products = await Product.find({ isDeleted: false });
+    if (!products) {
+      return res.status(404).json({ message: "Products not found" });
+    }
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
