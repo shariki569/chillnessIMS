@@ -79,6 +79,8 @@ const ItemList = ({ onRefresh }) => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
     fetchProducts();

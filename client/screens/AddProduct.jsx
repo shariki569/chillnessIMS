@@ -5,22 +5,22 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { colors } from "../assets/colorPallette";
 import { useNavigation } from "@react-navigation/core";
-import PrimaryButton from "../components/PrimaryButton";
+// import PrimaryButton from "../../components/PrimaryButton";
 import axios from "axios";
 import { Button, Input } from "@ui-kitten/components";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
+import { imagePick, takePhoto } from "../utilities/imageUtils";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -79,20 +79,19 @@ const AddProduct = () => {
   };
   //Pick image from gallery
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setProduct({ ...product, image: result.assets[0].uri });
+    const imageUri = await imagePick();
+    if (imageUri) {
+      setProduct({ ...product, image: imageUri });
     }
   };
+
+  const openCam = async () => {
+    const result = await takePhoto();
+    if (result) {
+      setProduct({ ...product, image: result });
+    }
+  };
+
 
   return (
     <SafeAreaView>
@@ -109,7 +108,63 @@ const AddProduct = () => {
             Add New Item
           </Text>
         </View>
-        <View className="flex-1 m-7 p-5 items-center justify-center rounded-2xl bg-primary-light">
+        <View className="flex-row my-2 mx-5">
+          <View className="flex-1 mt-5 items-end justify-end ">
+            {product.image ? (
+              <Image
+                style={{
+                  height: 175,
+                  borderWidth: 1,
+                  width: 175,
+                  borderRadius: 10,
+                }}
+                source={{ uri: product.image }}
+              />
+            ) : (
+              <Image
+                style={{
+                  height: 175,
+                  borderWidth: 1,
+                  width: 175,
+                  borderRadius: 10,
+                }}
+                source={require("../assets/image-placeholder.png")}
+              />
+            )}
+          </View>
+          <View className="flex-1 mt-5 items-center justify-center ">
+            <Button
+              style={styles.imageButton}
+              onPress={openCam}
+              accessoryLeft={() => (
+                <Ionicons
+                  name="camera"
+                  size={25}
+                  color={colors.primaryContent}
+                  style={{ marginLeft: "auto" }}
+                />
+              )}
+            >
+              <Text className="mr-auto min-w-[50px]">Take a photo</Text>
+            </Button>
+            <Button
+              style={styles.imageButton}
+              onPress={pickImage}
+              accessoryLeft={() => (
+                <Ionicons
+                  name="albums"
+                  size={25}
+                  color={colors.primaryContent}
+                  style={{ marginLeft: "auto" }}
+                />
+              )}
+            >
+              <Text className="mr-auto min-w-[50px]">Gallery</Text>
+            </Button>
+          </View>
+        </View>
+
+        <View className="flex-1 mx-5 p-5 items-center justify-center rounded-2xl bg-primary-light">
           <View className="w-full">
             <Text className="text-primary-content text-[16px] pb-2 mr-auto">
               Product Name
@@ -162,36 +217,12 @@ const AddProduct = () => {
               value={product.description}
               onChangeText={(text) => handleChange("description", text)}
             />
-            {/* <TextInput
-              className="bg-white py-2 px-6 rounded-xl w-full"
-              multiline={true}
-              numberOfLines={10}
-              value={product.description}
-              onChangeText={(text) => handleChange("description", text)}
-            /> */}
           </View>
         </View>
         <View></View>
-        <View className="mt-2 mx-7" style={{ gap: 10 }}>
-          <View>
-            <TouchableOpacity onPress={pickImage}>
-              {product.image ? (
-                <Image
-                  className="w-full"
-                  style={{ height: 200, borderRadius: 10 }}
-                  source={{ uri: product.image }}
-                />
-              ) : (
-                <Image
-                  className="w-full"
-                  style={{ height: 200, borderRadius: 10 }}
-                  source={require("../assets/image-placeholder.png")}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
+        <View className="mt-6 mx-7" style={{ gap: 10 }}>
           <Button
-            style={{ borderRadius: 20 }}
+            style={{ borderRadius: 40 }}
             onPress={handleSubmit}
             size="large"
           >
@@ -210,4 +241,15 @@ const styles = StyleSheet.create({
     marginRight: "auto",
   },
   input: { padding: 2, borderRadius: 10 },
+  imageButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    borderRadius: 40,
+    marginTop: 10,
+    minWidth: 100,
+    maxWidth: 150,
+    width: "100%",
+  },
 });

@@ -9,40 +9,58 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, Fontisto } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+// import { colors } from "../../assets/colorPallette";
 import PrimaryButton from "../components/PrimaryButton";
 
-const RegisterScreen = () => {
+const LoginScreen = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigation();
-  const route = useRoute();
+const route = useRoute();
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        if(token){
+          navigate.replace("Main");
+        }
+      } catch (error) {
+        console.log("Error checking token", error);
+      }
+    }
+    checkToken();
+  }, []);
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
+    const user = {
+      email: email,
+      password: password,
+    };
     try {
-      const user = { name, email, password };
-      await axios.post(`${process.env.EXPO_PUBLIC_API_URL}register`, user);
-      Alert.alert("Registration Successful", "Please Login to continue");
-    } catch (err) {
-      console.log("Registration Failed", err.response.data);
-      Alert.alert("Error", err.response.data.message);
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}login`,
+        user
+      );
+      console.log(response);
+      const token = response.data.token;
+      AsyncStorage.setItem("authToken", token);
+      navigate.replace("Main");
+    } catch (error) {
+      Alert.alert("Error", error.response.data.message);
+      console.log(error);
+    } finally {
+      Alert.alert("Login Successful");
     }
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <SafeAreaView className="flex-1 items-center justify-center ">
       <ImageBackground
         source={require("../assets/background-1.png")}
         style={{
@@ -61,37 +79,51 @@ const RegisterScreen = () => {
               source={require("../assets/ChillnessLogo.png")}
             />
           </View>
-
           <KeyboardAvoidingView>
+          
             <View className="flex-row justify-center items-center  pt-6 pb-3">
-              <PrimaryButton
-                onPress={() => navigate.goBack()}
+            <PrimaryButton
+                onPress={() => navigate.navigate("Register")}
                 text={"Login"}
                 style={"w-[50%] m-1 "}
+                solid={route.name === "Login" ? true : false}
               />
               <PrimaryButton
-                onPress={() => navigate.goBack()}
+                onPress={() => navigate.navigate("Register")}
                 text={"Register"}
                 style={"w-[50%] m-1 "}
-                solid={route.name === "Register" ? true : false}
               />
+              
+              {/* <Pressable
+               
+                onPress={() => navigate.navigate("Register")}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "#899584",
+                    fontSize: 15,
+                  }}
+                >
+                  Register
+                </Text>
+              </Pressable>
+              <Pressable
+             
+                onPress={() => navigate.navigate("Register")}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "#899584",
+                    fontSize: 15,
+                  }}
+                >
+                  Register
+                </Text>
+              </Pressable> */}
             </View>
-            <View className="mt-2">
-              <View style={styles.textContainer}>
-                <MaterialIcons
-                  style={{ marginLeft: 8, color: "#899584" }}
-                  name="account-circle"
-                  size={24}
-                  color="black"
-                />
-                <TextInput
-                  value={name}
-                  onChangeText={(text) => setName(text)}
-                  style={[styles.textInput, { fontSize: name ? 15 : 15 }]}
-                  placeholder="Enter your name"
-                />
-              </View>
-            </View>
+
             <View className="mt-2">
               <View style={styles.textContainer}>
                 <MaterialIcons
@@ -104,7 +136,7 @@ const RegisterScreen = () => {
                   value={email}
                   onChangeText={(text) => setEmail(text)}
                   style={[styles.textInput, { fontSize: email ? 15 : 15 }]}
-                  placeholder="Enter your email"
+                  placeholder="Enter your e-mail"
                 />
               </View>
             </View>
@@ -125,6 +157,29 @@ const RegisterScreen = () => {
                 />
               </View>
             </View>
+            <View style={{ marginTop: 30 }} />
+
+            {/* <Pressable
+              onPress={handleLogin}
+              className="rounded-3xl mx-auto"
+              style={{
+                width: 300,
+                backgroundColor: "#8cd64c",
+                padding: 15,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#1a320f",
+                  fontSize: 15,
+                  fontWeight: "bold",
+                }}
+              >
+                Login
+              </Text>
+            </Pressable> */}
+            <PrimaryButton onPress={handleLogin} text={"Login"} solid={true} style={"w-full "}/>
             <View
               style={{
                 marginTop: 12,
@@ -138,13 +193,6 @@ const RegisterScreen = () => {
                 Forgot password
               </Text>
             </View>
-            <View style={{ marginTop: 30 }} />
-            <PrimaryButton
-              onPress={handleRegister}
-              text={"Register"}
-              style={"w-full"}
-              solid
-            />
           </KeyboardAvoidingView>
         </View>
       </ImageBackground>
@@ -152,25 +200,27 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   headingText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 12,
+    marginTop: 10,
     color: "#899584",
   },
   textInput: {
     color: "grey",
     marginVertical: 10,
-    width: 250,
+    width: 300,
     color: "#899584",
+    width: 250,
+    marginLeft: 12,
   },
   textContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: 3,
     backgroundColor: "#fbfbfb",
     paddingVertical: 5,
     marginHorizontal: 1,
@@ -178,4 +228,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-// console.log(process.env.EXPO_PUBLIC_API_URL);

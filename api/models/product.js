@@ -1,5 +1,11 @@
 import { mongoose } from "mongoose";
 
+const variantSchema = mongoose.Schema({
+  size: String,
+  price: Number,
+  quantity: Number,
+})
+
 const productSchema = mongoose.Schema({
   prodImage: {
     type: String,
@@ -11,7 +17,9 @@ const productSchema = mongoose.Schema({
   },
   prodQuantity: {
     type: Number,
+    default: 0,
   },
+  variants: [variantSchema],
   prodPrice: {
     type: Number,
     required: true,

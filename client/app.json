@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+   
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -31,6 +32,14 @@
       "eas": {
         "projectId": "418a6355-bf4b-4fcc-ad24-e3245105c2a3"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
   }
 }

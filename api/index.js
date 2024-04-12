@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import registerUser from "./routes/register.js";
 import loginUser from "./routes/login.js";
 import products from "./routes/products.js";
+
 const port = process.env.PORT;
 const IPaddress = process.env.IP_ADDRESS;
 const app = express();
