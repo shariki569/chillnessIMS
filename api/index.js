@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import registerUser from "./routes/register.js";
 import loginUser from "./routes/login.js";
 import products from "./routes/products.js";
+import category from "./routes/category.js";
 
 const port = process.env.PORT;
 const IPaddress = process.env.IP_ADDRESS;
@@ -19,10 +20,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/api/register", registerUser);
 app.use("/api/login", loginUser);
 app.use("/api/products", products);
+app.use("/api/categories", category);
 
 mongoose
   .connect(
-    "mongodb+srv://shashariki569:zafUvtQnlPQ65PqK@cluster0.hrse5rt.mongodb.net/"
+    `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.hrse5rt.mongodb.net/`
   )
   .then(() => {
     console.log("MongoDB connected");

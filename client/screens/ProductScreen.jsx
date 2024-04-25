@@ -20,7 +20,7 @@ import { useNavigation } from "@react-navigation/core";
 
 const Homescreen = () => {
   const navigate = useNavigation();
- 
+
   const list = [
     {
       name: "Milk Tea",
@@ -97,10 +97,10 @@ const Homescreen = () => {
         </ScrollView>
       </View>
 
-      <View>
+      {/* <View>
         <Text className="text-center text-xl font-bold mt-2">Milk TeaTea</Text>
-      </View>
-      <ItemList/>
+      </View> */}
+      <ItemList />
       {/* </ScrollView> */}
     </SafeAreaView>
   );

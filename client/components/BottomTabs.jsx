@@ -3,10 +3,12 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { colors } from "../assets/colorPallette";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Homescreen from "../screens/Homescreen";
-import { MaterialIcons } from "@expo/vector-icons";
+import Home from "../screens/Home";
+import POS from "../screens/PointOfSaleScreen";
+import { MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
 import Inventory from "../screens/Inventory";
 import AddProduct from "../screens/AddProduct";
+import ProductScreen from "../screens/ProductScreen";
 
 const BottomTabs = () => {
   const Tab = createBottomTabNavigator();
@@ -14,7 +16,7 @@ const BottomTabs = () => {
   const tabItems = [
     {
       name: "Home",
-      component: Homescreen,
+      component: Home,
       icon: (
         <View style={styles.tabContainer}>
           <MaterialCommunityIcons
@@ -48,7 +50,11 @@ const BottomTabs = () => {
 
       iconActive: (
         <View style={styles.activeTabContainer}>
-          <MaterialIcons name="inventory" size={24} color={colors.primaryContent} />
+          <MaterialIcons
+            name="inventory"
+            size={24}
+            color={colors.primaryContent}
+          />
           <Text className="text-primary-content">Inventory</Text>
         </View>
       ),
@@ -57,7 +63,7 @@ const BottomTabs = () => {
       name: "Add Product",
       component: AddProduct,
       icon: (
-        <View className="bg-primary p-1 px-5 flex-1 justify-center items-center rounded-xl">
+        <View className="bg-primary p-1 px-5 flex-1 justify-center items-center rounded-full">
           <MaterialIcons name="add-circle" size={30} color="black" />
         </View>
       ),
@@ -69,10 +75,14 @@ const BottomTabs = () => {
     },
     {
       name: "Products",
-      component: Inventory,
+      component: ProductScreen,
       icon: (
         <View style={styles.tabContainer}>
-          <MaterialIcons name="assignment-turned-in" size={24} color={colors.copyLight} />
+          <MaterialIcons
+            name="assignment-turned-in"
+            size={24}
+            color={colors.copyLight}
+          />
           <Text className="text-copy-light">Products</Text>
         </View>
       ),
@@ -89,22 +99,18 @@ const BottomTabs = () => {
     },
 
     {
-      name: "Cart",
-      component: Homescreen,
+      name: "POS",
+      component: POS,
       icon: (
         <View style={styles.tabContainer}>
-          <MaterialCommunityIcons
-            name="cart-outline"
-            size={24}
-            color={colors.copyLight}
-          />
-          <Text className="text-copy-light">Cart</Text>
+          <FontAwesome6 name="cash-register" size={24} color={colors.copyLight} />
+          <Text className="text-copy-light">POS</Text>
         </View>
       ),
       iconActive: (
         <View style={styles.activeTabContainer}>
-          <MaterialCommunityIcons name="cart" size={24} color={colors.copy} />
-          <Text className="text-copy">Cart</Text>
+          <FontAwesome6 name="cash-register" size={24} color={colors.copyLight} />
+          <Text className="text-copy">POS</Text>
         </View>
       ),
     },
@@ -152,10 +158,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    // paddingVertical: 5,
-    // paddingHorizontal: 15,
     minWidth: 65,
-    height: 50,
+    height: "100%",
     borderRadius: 10,
   },
 });

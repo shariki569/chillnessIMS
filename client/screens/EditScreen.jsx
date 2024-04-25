@@ -39,7 +39,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
 import { imagePick, takePhoto } from "../utilities/imageUtils";
 import { Camera } from "expo-camera/next";
-import { getCategories } from "../API/getCategory";
+import useFetchCategories from "../API/getCategory";
 import QuantityWithUnit from "../components/QuantityWithUnit";
 import ModalUnitPicker from "../components/ModalUnitPicker";
 import CameraViewScanner from "../components/CameraViewScanner";
@@ -76,12 +76,12 @@ const AddProduct = () => {
   const navigate = useNavigation();
   const [loading, setLoading] = useState(0);
 
-  // Use the hook here
+  const fetchCategories = useFetchCategories(); // Use the hook here
 
   useEffect(() => {
     const fetchCategoriesData = async () => {
       try {
-        const { categories: categoriesData } = await getCategories();
+        const categoriesData = await fetchCategories();
         console.log("Fetched categories:", categoriesData); // Check if data is fetched
         setProduct((prevProduct) => ({
           ...prevProduct,
@@ -223,19 +223,6 @@ const AddProduct = () => {
   };
 
 
-  // const renderAutoCompleteItem = ({ styles, category }) => {
-  //   return (
-
-  //     <AutocompleteItem
-  //       style={styles.autocomplete}
-  //       key={category._id}
-  //       title={category.catName}
-  //     />
-
-  //   );
-  // }
-
-
 
   return (
     <>
@@ -321,28 +308,28 @@ const AddProduct = () => {
               <Text className="text-primary-content text-[16px] pb-2 mr-auto">
                 Item Category
               </Text>
-
-              <Autocomplete
-                style={{
-                  ...styles.input,
-                  minWidth: 310,
-                  maxWidth: 700,
-                  width: "100%",
-                }}
-                value={product.category}
-                placement="inner top"
-                onChangeText={onChangeCategory}
-                onSelect={onSelect}
-              >
-                {product.categories.map((category) => (
+              {product.categories && product.categories.length > 0 ? (
+                <Autocomplete
+                  style={{
+                    ...styles.input,
+                    minWidth: 310,
+                    maxWidth: 700,
+                    width: "100%",
+                  }}
+                  value={product.category}
+                  placement="inner top"
+                  onChangeText={onChangeCategory}
+                  onSelect={onSelect}
+                >
+                  {product.categories.map((category) => (
                     <AutocompleteItem
                       style={styles.autocomplete}
                       key={category._id}
                       title={category.catName}
                     />
                   ))}
-              </Autocomplete>
-              {/* ) : (
+                </Autocomplete>
+              ) : (
                 <Input
                   style={styles.input}
                   value={product.category}
@@ -353,7 +340,7 @@ const AddProduct = () => {
                     }))
                   }
                 />
-              )} */}
+              )}
             </View>
             <View className="w-full">
               <Text className="text-primary-content text-[16px] pb-2 mr-auto">
