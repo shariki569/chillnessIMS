@@ -1,6 +1,7 @@
 import User from '../../models/user.js'
 import crypto from 'crypto'
 import { sendVerificatonEmail } from '../../utilities/sendVerification.js';
+import bcrypt from 'bcrypt'
 
 export const register = async (req, res) => {
     try {
@@ -13,11 +14,13 @@ export const register = async (req, res) => {
             return res.status(400).json({message: "Email already exists"})
         }
 
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         //create new user
         const newUser = new User({
             name,
             email, 
-            password
+            password: hashedPassword
         });
 
         //generate and store the verification token
