@@ -1,4 +1,3 @@
-
 import { Category, Product } from "../../models/product.js";
 
 export const getCategories = async (req, res) => {
@@ -10,6 +9,32 @@ export const getCategories = async (req, res) => {
     });
     if (categories.length === 0) {
       return res.status(404).json({ message: "Categories not found" });
+    }
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getCategory = async (req, res) => {
+  try {
+    const { category } = req.query;
+    let query = {
+      isDeleted: false,
+    };
+
+    if (category) {
+      query.catName = { $regex: category, $options: "i" };
+    }
+
+    const categories = await Category.find(query).populate({
+      path: "prodItems",
+      match: { isDeleted: false },
+      select: "prodImage prodCode prodName prodPrice",
+    });
+
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({ message: "No categories found" });
     }
     res.status(200).json(categories);
   } catch (error) {
