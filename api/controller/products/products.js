@@ -131,8 +131,8 @@ export const updateProduct = async (req, res) => {
       },
       { new: true }
     );
-    foundCategory.prodItems.push(updatedProduct._id);
-    await foundCategory.save();
+    // foundCategory.prodItems.push(updatedProduct._id);
+    // await foundCategory.save();
 
     await updatedProduct.save();
     res.status(200).json(updatedProduct);
@@ -149,6 +149,7 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
     product.isDeleted = true;
+    product.deletedAt =  new Date()
     await product.save();
     res.status(200).json({ message: `${product.prodName} has been deleted successfully` });
   } catch (error) {
