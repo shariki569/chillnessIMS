@@ -40,13 +40,13 @@ const VerticalListInventory = ({ item, handleRefresh, refresh }) => {
     return (
       <TouchableOpacity >
         <View className="bg-foreground p-2 flex-row items-center ">
-          <Text className="text-copy w-[80px] p-2 ">{item.prodName}</Text>
-          <Text className="text-copy w-[70px] p-2 ">{item.prodPrice}</Text>
+          <Text className="text-copy w-[80px] p-2 ">{item?.prodName}</Text>
+          <Text className="text-copy w-[70px] p-2 ">{item?.prodPrice}</Text>
           <Text className="text-copy w-[70px] p-2 ">
-            {item.prodQuantity} {item.prodUnit}
+            {item?.prodQuantity} {item?.prodUnit}
           </Text>
           <Text className="text-copy w-[90px] p-2 ">
-            {item.prodCategory[0].catName}
+            {item.prodCategory?.catName}
           </Text>
           {/* <Text className="text-copy w-[90px] p-2 ">{item.addStocks}</Text> */}
           <View className=" w-[70px] flex-row gap-1 items-center justify-center ">

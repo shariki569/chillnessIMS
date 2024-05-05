@@ -22,12 +22,12 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigation();
-const route = useRoute();
+  const route = useRoute();
   useEffect(() => {
     const checkToken = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-        if(token){
+        if (token) {
           navigate.replace("Main");
         }
       } catch (error) {
@@ -80,9 +80,9 @@ const route = useRoute();
             />
           </View>
           <KeyboardAvoidingView>
-          
+
             <View className="flex-row justify-center items-center  pt-6 pb-3">
-            <PrimaryButton
+              <PrimaryButton
                 onPress={() => navigate.navigate("Register")}
                 text={"Login"}
                 style={"w-[50%] m-1 "}
@@ -93,7 +93,7 @@ const route = useRoute();
                 text={"Register"}
                 style={"w-[50%] m-1 "}
               />
-              
+
               {/* <Pressable
                
                 onPress={() => navigate.navigate("Register")}
@@ -179,7 +179,7 @@ const route = useRoute();
                 Login
               </Text>
             </Pressable> */}
-            <PrimaryButton onPress={handleLogin} text={"Login"} solid={true} style={"w-full "}/>
+            <PrimaryButton onPress={handleLogin} text={"Login"} solid={true} style={"w-full "} />
             <View
               style={{
                 marginTop: 12,

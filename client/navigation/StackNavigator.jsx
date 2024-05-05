@@ -9,7 +9,13 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import AddProductScreen from "../screens/AddProduct";
 import Inventory from "../screens/Inventory";
-import EditProductScreen from "../screens/EditScreen";
+// import EditProductScreen from "../screens/EditScreen";
+import EditScreen from "../screens/EditScreen";
+import PreviewOrderScreen from "../screens/PreviewOrderScreen";
+import PaymentOption from "../screens/PaymentOption";
+// import PaymentBill from "../screens/PaymentConfirmatiom";
+import PaymentConfirmation from "../screens/PaymentConfirmation";
+import ViewReceiptScreen from "../screens/ViewReceiptScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -23,6 +29,29 @@ const StackNavigator = () => {
           component={LoginScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="ViewReceipt"
+          component={ViewReceiptScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="PaymentOptions"
+          component={PaymentOption}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PaymentConfirmation"
+          component={PaymentConfirmation}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="PreviewOrder"
+          component={PreviewOrderScreen}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
@@ -40,7 +69,7 @@ const StackNavigator = () => {
         />
         <Stack.Screen
           name="EditProduct"
-          component={EditProductScreen}
+          component={EditScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

@@ -17,7 +17,7 @@ export const searchProduct = async (req, res) => {
     }).populate("prodCategory", "catName");
 
     if (products.length === 0) {
-      return res.status(404).json({ message: "Products not found" });
+      return res.status(404).json({ message: `Product ${item} not found` });
     }
 
     res.status(200).json(products);
