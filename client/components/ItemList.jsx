@@ -21,14 +21,16 @@ import { Feather } from '@expo/vector-icons';
 import { Button, Divider } from "@ui-kitten/components";
 import { getCategories } from "../API/getCategory";
 import { colors } from "../assets/colorPallette";
+import { useNavigation } from "@react-navigation/native";
 
 const ItemList = ({ onRefresh }) => {
   const [categoryList, setCategoryList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const navigate = useNavigation();
 
   const fetchData = useCallback(async () => {
     try {
-      const { categories, error } = await getCategories();
+      const { categories, error } = await getCategories({ search: "" });
       if (error) {
         ToastAndroid.show(error, ToastAndroid.SHORT);
       } else {
@@ -42,12 +44,29 @@ const ItemList = ({ onRefresh }) => {
     }
   }, []);
   const handleDelete = async (id) => {
-    try {
-      await deleteProduct(id);
-      handleRefresh();
-    } catch (error) {
-      console.log(error);
-    }
+   
+
+    Alert.alert(
+      "Confirm Delete",
+      "Do you want to delete this product?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel"
+        },
+        {
+          text: "OK", onPress: async () => {
+            try {
+              await deleteProduct(id);
+              handleRefresh();
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      ]
+    )
   }
 
   useEffect(() => {
@@ -58,6 +77,13 @@ const ItemList = ({ onRefresh }) => {
     setRefreshing(true);
     fetchData();
   }, [fetchData]);
+
+  const handleEdit = (product, category) => {
+    const productData = {...product, category};
+    navigate.navigate("AddProduct", { productData });
+    console.log('edit', product)
+  }
+
   return (
     <ScrollView
       refreshControl={
@@ -83,63 +109,17 @@ const ItemList = ({ onRefresh }) => {
                       <Text className="text-copy text-xl">₱{product.prodPrice}</Text>
                     </View>
                     <View className="w-1/4 ml-auto  flex-row justify-evenly">
-
-
                       <TouchableOpacity onPress={() => handleDelete(product._id)} className="bg-error rounded-full px-3 py-3 ">
                         <Feather name="trash-2" size={15} color={colors.errorContent} />
                       </TouchableOpacity>
-                      <TouchableOpacity className="bg-secondary rounded-full px-3 py-3 ">
+                      <TouchableOpacity className="bg-secondary rounded-full px-3 py-3" onPress={() => handleEdit(product, category.catName)}>
                         <Feather name="edit" size={15} color={colors.secondaryContent} />
                       </TouchableOpacity>
                     </View>
                   </View>)}
               </View>)
           ))
-
-
         }
-        {/* {productList &&
-          productList.map((product) => (
-            <TouchableOpacity
-              key={product._id}
-              className="m-1 bg-white rounded-md flex-basis-[25%] w-[31%] max-h-25 overflow-hidden"
-            >
-              <View>
-                {product.prodImage ? (
-                  <Image
-                    source={{
-                      uri: product.prodImage,
-                    }}
-                    className="w-full max-h-25 aspect-square"
-                    // resizeMode="cover" // Set resizeMode to "cover"
-                    style={{ height: 120 }}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <Image
-                    source={require("../assets/image-placeholder.png")}
-                    // className=""
-                    style={{ height: 120 }}
-                    resizeMode="contain"
-                  />
-                )}
-              </View>
-              <View className=" border-t-2 border-primary w-full pb-2 px-3">
-                <View className="  flex-row justify-between">
-                  <Text className="pt-1 text-copy-light">
-                    ₱{product.prodPrice}
-                  </Text>
-                  <Text className="pt-1 text-copy-light">
-                    Qty: {product.prodQuantity}
-                  </Text>
-                </View>
-
-                <Text className="text-copy font-bold text-[16px]">
-                  {product.prodName}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))} */}
       </View>
     </ScrollView>
   );

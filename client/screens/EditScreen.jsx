@@ -24,8 +24,6 @@ import { useNavigation } from "@react-navigation/core";
 // import PrimaryButton from "../../components/PrimaryButton";
 import axios from "axios";
 import {
-  Autocomplete,
-  AutocompleteItem,
   Button,
   Card,
   Divider,
@@ -39,35 +37,31 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
 import { imagePick, takePhoto } from "../utilities/imageUtils";
 import { Camera } from "expo-camera/next";
-import useFetchCategories from "../API/getCategory";
+import { getCategories } from "../API/getCategory";
 import QuantityWithUnit from "../components/QuantityWithUnit";
 import ModalUnitPicker from "../components/ModalUnitPicker";
 import CameraViewScanner from "../components/CameraViewScanner";
+import Autocomplete from "../components/Autocomplete";
 
-// const showEvent = Platform.select({
-//   android: 'keyboardDidShow',
-//   default: 'keyboardWillShow',
-// });
+const EditScreen = ({ route }) => {
+  const { productData } = route.params;
 
-// const hideEvent = Platform.select({
-//   android: 'keyboardDidHide',
-//   default: 'keyboardWillHide',
-// });
-
-const AddProduct = () => {
   const [product, setProduct] = useState({
-    name: "",
-    quantity: 0,
-    lowQuantity: 0,
-    unit: "piece",
-    price: 0,
-    description: "",
-    image: "",
+    name: productData?.prodName || "",
+    quantity: productData?.prodQuantity || 0,
+    lowQuantity: productData?.prodLowQuantity || 0,
+    unit: productData?.prodUnit || "",
+    price: productData?.prodPrice || 0,
+    description: productData?.prodDescription || "",
+    image: productData?.prodImage || "",
     uploading: false,
-    code: null,
-    category: null,
+    code: productData?.prodCode || "",
     categories: [],
+    suggestions: [],
+    category: productData.category || "",
+    selectedCategory: null,
   });
+
   const [showScanner, setShowScanner] = useState(false);
 
   const [scanned, setScanned] = useState(false);
@@ -76,17 +70,18 @@ const AddProduct = () => {
   const navigate = useNavigation();
   const [loading, setLoading] = useState(0);
 
-  const fetchCategories = useFetchCategories(); // Use the hook here
+  // Use the hook here
 
   useEffect(() => {
-    const fetchCategoriesData = async () => {
+    const fetchCategoriesData = async (search) => {
       try {
-        const categoriesData = await fetchCategories();
+        const { categories: categoriesData } = await getCategories({ search });
         console.log("Fetched categories:", categoriesData); // Check if data is fetched
         setProduct((prevProduct) => ({
           ...prevProduct,
           categories: categoriesData || [], // Use default empty array if data is undefined
         }));
+        // console.log("Categories:", categoriesData);
       } catch (error) {
         console.log("Error fetching categories:", error);
       }
@@ -110,33 +105,6 @@ const AddProduct = () => {
   //   getCameraPermissions();
   // }, []);
 
-  const onSelect = useCallback(
-    (index) => {
-      if (product.categories[index]) {
-        setProduct((prevProduct) => ({
-          ...prevProduct,
-          category: product.categories[index].catName, // Update to set the category name
-        }));
-      }
-    },
-    [product.categories]
-  );
-
-  const onChangeCategory = (value) => {
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      category: value,
-      categories: filter(product.categories, value),
-    }));
-  };
-
-  const filter = (categories, title) => {
-    return categories.filter((category) =>
-      category && category.catName && title
-        ? category.catName.toLowerCase().includes(title.toLowerCase())
-        : false
-    );
-  };
 
   const handleBarCodeScanned = ({ type, data }) => {
     try {
@@ -181,10 +149,13 @@ const AddProduct = () => {
         code: product.code,
         category: product.category,
       };
-      await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}products`,
-        productData
-      );
+      productData ?
+        await axios.put(`${process.env.EXPO_PUBLIC_API_URL}products/${productData._id}`, productData)
+        :
+        await axios.post(
+          `${process.env.EXPO_PUBLIC_API_URL}products`,
+          productData
+        );
       Alert.alert("Success", "Product added successfully");
       setProduct({
         name: "",
@@ -222,7 +193,33 @@ const AddProduct = () => {
     setProduct({ ...product, unit: unit });
   };
 
+  const updatedSuggestions = (text) => {
 
+
+    const filteredSuggestions = product.categories?.filter((item) =>
+      item.catName && item.catName.toLowerCase().includes(product.category.toLowerCase())
+    );
+
+
+
+    setProduct({
+      ...product,
+      suggestions: filteredSuggestions,
+      category: text,
+    });
+
+  };
+
+  const onSelect = (selectedItem) => {
+    setProduct({
+      ...product,
+      selectedCategory: selectedItem,
+      category: selectedItem.catName,
+      suggestions: [],
+
+    });
+
+  }
 
   return (
     <>
@@ -241,7 +238,7 @@ const AddProduct = () => {
               />
             </Pressable>
             <Text className="text-primary-content text-lg mr-auto">
-              Add New Item
+              Add New Item This is the Edit Screen
             </Text>
           </View>
           <View>
@@ -308,39 +305,19 @@ const AddProduct = () => {
               <Text className="text-primary-content text-[16px] pb-2 mr-auto">
                 Item Category
               </Text>
-              {product.categories && product.categories.length > 0 ? (
-                <Autocomplete
-                  style={{
-                    ...styles.input,
-                    minWidth: 310,
-                    maxWidth: 700,
-                    width: "100%",
-                  }}
-                  value={product.category}
-                  placement="inner top"
-                  onChangeText={onChangeCategory}
-                  onSelect={onSelect}
-                >
-                  {product.categories.map((category) => (
-                    <AutocompleteItem
-                      style={styles.autocomplete}
-                      key={category._id}
-                      title={category.catName}
-                    />
+
+              <Input style={{ ...styles, position: "relative" }} onChangeText={(text) => updatedSuggestions(text)} value={product.category} />
+
+
+              {product.suggestions?.length > 0 && product?.category !== "" &&
+                <ScrollView contentContainerStyle={styles.scrollView} className="absolute mt-[68px] z-10  w-full bg-primary rounded-t-sm rounded-b-lg">
+                  {product.suggestions.map((suggestion) => (
+                    <TouchableOpacity onPress={() => onSelect(suggestion)} key={suggestion._id} activeOpacity={0.5} className='w-full bg-foreground py-3 px-2'>
+                      <Text>{suggestion.catName} </Text>
+                    </TouchableOpacity>
                   ))}
-                </Autocomplete>
-              ) : (
-                <Input
-                  style={styles.input}
-                  value={product.category}
-                  onChangeText={(text) =>
-                    setProduct((prevProduct) => ({
-                      ...prevProduct,
-                      category: text, // Set category directly
-                    }))
-                  }
-                />
-              )}
+                </ScrollView>
+              }
             </View>
             <View className="w-full">
               <Text className="text-primary-content text-[16px] pb-2 mr-auto">
@@ -493,9 +470,13 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditScreen;
 
 const styles = StyleSheet.create({
+  scrollView: {
+    maxHeight: 200,
+    flexGrow: 1
+  },
   iconPosition: {
     position: "absolute",
     top: 10,

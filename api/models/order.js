@@ -68,37 +68,50 @@ const orderItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
-    quantity: {
-      type: Number,
-      required: true,
-    },
+  },
+  quantity: {
+    type: Number,
+    required: true,
   },
 });
 
 const orderSchema = new mongoose.Schema({
-    customer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
-    orderItems: [orderItemSchema],
-    orderDate: {
-        type: Date,
-        default: Date.now(),
-    },
-    totalAmount: {
-        type: Number,
-        required: true,
-    },
-    paymentMethod: {
-        type: String,
-        required: true,
-    },
-    paymentStatus: {
-        type: String,
-        required: true,
-    }
-})
+  customer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  orderItems: [orderItemSchema],
+  orderDate: {
+    type: Date,
+    default: Date.now(),
+  },
+  receiptNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  totalAmount: {
+    type: Number,
+    required: true,
+  },
+  amountReceived: {
+    type: Number,
+    required: true,
+  },
+  amountChange: {
+    type: Number,
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    required: true,
+  },
+  paymentStatus: {
+    type: String,
+    required: true,
+    default: "Pending",
+  },
+});
 
 const Order = mongoose.model("Order", orderSchema);
 

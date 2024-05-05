@@ -114,6 +114,19 @@ export const updateProduct = async (req, res) => {
       foundCategory = newCategory;
     }
 
+    //Remove the product from the old category
+    const oldCategory = await Category.findOneAndUpdate(
+      { _id: product.prodCategory },
+      { $pull: { prodItems: product._id } },
+      { new: true }
+    );
+   // Add the product to the new category's prodItems array
+    const newCategory = await Category.findOneAndUpdate(
+      { _id: foundCategory._id },
+      { $addToSet: { prodItems: product._id } },
+      { new: true }
+    );
+
     const updatedProduct = await Product.findByIdAndUpdate(
       product._id,
       {

@@ -5,7 +5,9 @@ export const getCategories = async (req, res) => {
     const categories = await Category.find({ isDeleted: false }).populate({
       path: "prodItems",
       match: { isDeleted: false },
-      select: "prodImage prodCode prodName prodPrice",
+      select:
+        "prodCategory prodImage prodCode prodName prodPrice prodDescription prodQuantity prodLowQuantity prodUnit isDeleted deletedAt createdAt updatedOn",
+      // populate: { path: "prodItems", prodname: "prodName" },
     });
     if (categories.length === 0) {
       return res.status(404).json({ message: "Categories not found" });
@@ -30,7 +32,9 @@ export const getCategory = async (req, res) => {
     const categories = await Category.find(query).populate({
       path: "prodItems",
       match: { isDeleted: false },
-      select: "prodImage prodCode prodName prodPrice",
+      select:
+        "prodCategory prodImage prodCode prodName prodPrice prodDescription prodQuantity prodLowQuantity prodUnit isDeleted deletedAt createdAt updatedOn",
+      populate: { path: "prodItem", prodname: "prodName" },
     });
 
     if (!categories || categories.length === 0) {

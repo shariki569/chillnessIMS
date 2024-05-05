@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import React, { useEffect, useState } from "react";
 import { Camera, CameraView } from "expo-camera/next";
@@ -39,7 +39,7 @@ const CameraViewScanner = ({ scanned, setScanned, handleBarCodeScanned, closeSca
 
 
   return (
-    <View className="flex-row items-center justify-center h-screen w-full">
+    <View style={{ marginTop: Platform.OS === "android" ? 30 : 0 }} className=" z-10 absolute flex-row items-center justify-center h-screen w-full">
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={[StyleSheet.absoluteFillObject, styles.camera]}

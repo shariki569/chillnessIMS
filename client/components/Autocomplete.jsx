@@ -1,44 +1,35 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { Input } from "@ui-kitten/components";
 
-const Autocomplete = ({ data, onSelect }) => {
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-
-  const handleInputChange = (text) => {
-    setQuery(text);
-    const filtered = data.filter((item) =>
-      item.toLowerCase().includes(text.toLowerCase())
-    );
-    setSuggestions(filtered);
-  };
-
-  const handleSelect = (item) => {
-    setQuery(item);
-    onSelect(item);
-  };
+const Autocomplete = ({ styles, suggestions, searchString, onChangeText, onSelect }) => {
 
   return (
-    <View>
-      <Input value={query} onChangeText={handleInputChange}>
-        Autocomplete
-      </Input>
-      {suggestions.length > 0 && (
-        <FlatList
-          data={suggestions}
-          keyExtractor={(item) => item.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleSelect(item)}>
-              <Text style={{ padding: 8 }}>{item}</Text>
+    < >
+      <View>
+        <Input style={{ ...styles, position: "relative" }} onChangeText={onChangeText} value={searchString} />
+      </View>
+
+      {suggestions?.length > 0 && searchString !== "" &&
+        <ScrollView contentContainerStyle={style.scrollView} className="absolute mt-[68px] z-10  w-full bg-primary rounded-t-sm rounded-b-lg">
+          {suggestions.map((suggestion) => (
+            <TouchableOpacity onPress={onSelect(suggestion)} key={suggestion._id} activeOpacity={0.5} className='w-full bg-foreground py-3 px-2'>
+              <Text>{suggestion.catName} </Text>
             </TouchableOpacity>
-          )}
-        />
-      )}
-    </View>
+          ))}
+        </ScrollView>
+      }
+    </>
   );
 };
 
 export default Autocomplete;
 
-const styles = StyleSheet.create({});
+const style = StyleSheet.create({
+
+  scrollView: {
+    maxHeight: 200,
+    flexGrow: 1
+  }
+});
+

@@ -33,12 +33,12 @@ const Inventory = () => {
 
 
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = ({ data }) => {
     try {
       setScanned(true);
       // setProduct({ ...product, code: data });
-      alert(`Bar code with type ${type} and data ${data} has been scanned!`);
       setShowScanner(false);
+      fetchData(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -50,50 +50,59 @@ const Inventory = () => {
     setSearchResults(text);
   };
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async (search) => {
     try {
       setRefresh(true);
-      const productsData = searchResults
-        ? await searchProduct(searchResults)
+      const { products, error } = search
+        ? await searchProduct(search)
         : await getProducts();
-
-      if (productsData.error) {
-        Alert.alert("Error", productsData.error);
+      if (error) {
+        Alert.alert("Error", error);
       } else {
-        setItem(productsData.products);
+        setItem(products);
       }
       setRefresh(false);
-
     } catch (err) {
       Alert.alert("Error", err.response.data.message);
     }
-  }, [searchResults]);
+  };
 
   useEffect(() => {
-    fetchData();
+    fetchData(searchResults); // Fetch data initially and whenever searchResults changes
   }, []);
+
+
+
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     setRefresh(true);
+  //     const productsData = searchResults
+  //       ? await searchProduct(searchResults)
+  //       : await getProducts();
+
+  //     if (productsData.error) {
+  //       Alert.alert("Error", productsData.error);
+  //     } else {
+  //       setItem(productsData.products);
+  //     }
+  //     setRefresh(false);
+
+  //   } catch (err) {
+  //     Alert.alert("Error", err.response.data.message);
+  //   }
+  // }, [searchResults]);
+
 
   const fetchDataReset = async () => {
     setSearchResults("");
     setRefresh(true);
-    try {
-      const productsData = await getProducts();
-      if (productsData.error) {
-        Alert.alert("Error", productsData.error);
-      } else {
-        setItem(productsData.products);
-      }
-    } catch (err) {
-      Alert.alert("Error", err.response.data.message);
-    } finally {
-      setRefresh(false);
-    }
-  }
+    fetchData("");
+  };
 
   const handleRefresh = useCallback(() => {
     setRefresh(true);
-    fetchData();
-  }, [fetchData]);
+    fetchData(searchResults); // Refresh data based on the current search
+  }, []);
 
   const renderSearchIcon = () => {
     if (searchResults) {
@@ -103,7 +112,7 @@ const Inventory = () => {
 
   return (
     <>
-      <SafeAreaView style={{ marginTop: Platform.OS === "android" ? 0 : 10  }}>
+      <SafeAreaView style={{ marginTop: Platform.OS === "android" ? 0 : 10 }}>
         <View className="bg-primary p-3 flex-row items-center justify-center">
           <Pressable className="mr-auto" onPress={() => navigate.goBack()}>
             <MaterialCommunityIcons
@@ -125,7 +134,7 @@ const Inventory = () => {
             style={{ flex: 1, marginRight: 10 }}
             accessoryRight={renderSearchIcon}
             returnKeyType="search"
-            onSubmitEditing={fetchData}
+            onSubmitEditing={() => fetchData(searchResults)}
           />
 
           <TouchableOpacity className="mx-auto" >
@@ -150,18 +159,18 @@ const Inventory = () => {
 
       {
         showScanner && (
-            <CameraViewScanner
-              closeScan={() => setShowScanner(false)}
-              setScanned={() => setScanned(false)}
-              scanned={scanned} handleBarCodeScanned={handleBarCodeScanned} />
-         
+          <CameraViewScanner
+            closeScan={() => setShowScanner(false)}
+            setScanned={() => setScanned(false)}
+            scanned={scanned} handleBarCodeScanned={handleBarCodeScanned} />
+
         )
       }
 
     </>
 
   );
-};
+}
 
 export default Inventory;
 

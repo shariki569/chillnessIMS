@@ -9,7 +9,7 @@ export const getProducts = async () => {
   } catch (error) {
     // Handle errors
     console.error("Error fetching products:", error);
-    return { error: error.message || "Failed to fetch products" };
+    return { error: error.response.data.message || "Failed to fetch products" };
   }
 };
 
@@ -20,8 +20,7 @@ export const searchProduct = async (search) => {
     return { products }; // Return the product list
   } catch (error) {
     // Handle errors
-    console.error("Error fetching products:", error);
-    return { error: error.message || "Failed to fetch products" };
+    return { error: error.response.data.message || "Failed to fetch products" };
   }
 };
 
@@ -34,6 +33,6 @@ export const deleteProduct = async (id) => {
   } catch (error) {
     // Handle errors
     console.error("Error fetching products:", error);
-    return { error: error.message || "Failed to fetch products" };
+    return { error: error.response.data.message || "Failed to fetch products" };
   }
 };

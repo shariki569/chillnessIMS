@@ -9,6 +9,7 @@ import { MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
 import Inventory from "../screens/Inventory";
 import AddProduct from "../screens/AddProduct";
 import ProductScreen from "../screens/ProductScreen";
+import EditScreen from "../screens/EditScreen";
 
 const BottomTabs = () => {
   const Tab = createBottomTabNavigator();
@@ -114,6 +115,7 @@ const BottomTabs = () => {
         </View>
       ),
     },
+    
     ,
   ];
 
