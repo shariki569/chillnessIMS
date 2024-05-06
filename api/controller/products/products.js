@@ -104,31 +104,45 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    let foundCategory = await Category.findOne({ catName: category });
+    // //Find the old category
+    // await Category.findOneAndUpdate(
+    //   { _id: product.prodCategory },
+    //   { $pull: { prodItems: product._id } },
+    //   { new: true }
+    // );
+    // // Add the product to the new category's prodItems array
+    // await Category.findOneAndUpdate(
+    //   { _id: foundCategory._id },
+    //   { $addToSet: { prodItems: product._id } },
+    //   { new: true }
+    // );
 
-    if (!foundCategory) {
-      const newCategory = new Category({
-        catName: category,
-      });
-      await newCategory.save();
-      foundCategory = newCategory;
+    let updatedCategory;
+    if (category) {
+      updatedCategory = await Category.findOneAndUpdate(
+        { catName: category },
+        { catName: category },
+        { upsert: true, new: true }
+      );
+
+      // Remove the product from the old category's prodItems array
+      await Category.findOneAndUpdate(
+        { _id: product.prodCategory },
+        { $pull: { prodItems: product._id } }
+      );
+
+      // Add the product to the new category's prodItems array
+      await Category.findOneAndUpdate(
+        { _id: updatedCategory._id },
+        { $addToSet: { prodItems: product._id } }
+      );
+    } else {
+      // If no new category is provided, maintain the existing category
+      updatedCategory = await Category.findById(product.prodCategory);
     }
 
-    //Remove the product from the old category
-    const oldCategory = await Category.findOneAndUpdate(
-      { _id: product.prodCategory },
-      { $pull: { prodItems: product._id } },
-      { new: true }
-    );
-   // Add the product to the new category's prodItems array
-    const newCategory = await Category.findOneAndUpdate(
-      { _id: foundCategory._id },
-      { $addToSet: { prodItems: product._id } },
-      { new: true }
-    );
-
     const updatedProduct = await Product.findByIdAndUpdate(
-      product._id,
+      id,
       {
         prodCode: code,
         prodName: name,
@@ -138,22 +152,18 @@ export const updateProduct = async (req, res) => {
         prodUnit: unit,
         prodQuantity: quantity,
         prodLowQuantity: lowQuantity,
-        prodCategory: foundCategory._id,
+        prodCategory: updatedCategory._id,
         variants: variants,
         updatedOn: updatedOn,
       },
       { new: true }
     );
-    // foundCategory.prodItems.push(updatedProduct._id);
-    // await foundCategory.save();
 
-    await updatedProduct.save();
     res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteProduct = async (req, res) => {
   try {
@@ -162,10 +172,12 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
     product.isDeleted = true;
-    product.deletedAt =  new Date()
+    product.deletedAt = new Date();
     await product.save();
-    res.status(200).json({ message: `${product.prodName} has been deleted successfully` });
+    res
+      .status(200)
+      .json({ message: `${product.prodName} has been deleted successfully` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};

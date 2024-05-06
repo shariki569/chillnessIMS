@@ -67,6 +67,19 @@ export const createOrder = async (req, res) => {
 
     await newOrder.save();
 
+    //Deduct the quantity from the product
+    await Promise.all(
+      orderItems.map(async (item) => {
+        const product = await Product.findById(item.product);
+        if (!product) {
+          throw new Error(`Product with ID ${item.product} not found`);
+        }
+        product.prodQuantity -= item.quantity;
+        await product.save();
+      })
+    )
+
+      
     res
       .status(201)
       .json({ message: "Order created successfully", order: newOrder, receiptNumber: receiptNumber,  });
@@ -75,6 +88,35 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// export const getOrders = async (req, res) => {
+//   try {
+//     const orders = await Order.find().populate({
+//       path: "orderItems.product",
+//       select: "prodName prodPrice quantity",
+//     });
+//     if (orders.length === 0) {
+//       return res.status(404).json({ message: "Orders not found" });
+//     }
+
+//     // Format orders with quantity included
+//     const ordersWithQuantity = orders.map((order) => {
+//       const orderItemsWithQuantity = order.orderItems.map((item) => ({
+//         product: item.product,
+//         quantity: item.quantity,
+//       }));
+//       return {
+//         ...order.toObject(),
+//         orderItems: orderItemsWithQuantity,
+//       };
+//     });
+
+//     res.status(200).json(ordersWithQuantity);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 
 export const getOrders = async (req, res) => {
   try {
@@ -86,19 +128,30 @@ export const getOrders = async (req, res) => {
       return res.status(404).json({ message: "Orders not found" });
     }
 
-    // Format orders with quantity included
+    // Calculate total sales and number of orders
+    let totalSales = 0;
+    let numberOfOrders = orders.length;
+
+    // Format orders with quantity included and calculate total sales
     const ordersWithQuantity = orders.map((order) => {
-      const orderItemsWithQuantity = order.orderItems.map((item) => ({
-        product: item.product,
-        quantity: item.quantity,
-      }));
+      const orderItemsWithQuantity = order.orderItems.map((item) => {
+        totalSales += item.product.prodPrice * item.quantity;
+        return {
+          product: item.product,
+          quantity: item.quantity,
+        };
+      });
       return {
         ...order.toObject(),
         orderItems: orderItemsWithQuantity,
       };
     });
 
-    res.status(200).json(ordersWithQuantity);
+    res.status(200).json({
+      orders: ordersWithQuantity,
+      totalSales: totalSales,
+      numberOfOrders: numberOfOrders,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -86,6 +86,7 @@ const ViewReceiptScreen = ({ route }) => {
                     <Text style={styles.headerText}>CHILLNESS BY LAVIOCA</Text>
                     <Text>One Central Hotel, Corner Leon Kilat, Sanciangko St, Cebu City</Text>
                     <Text>VAT REGISTERED TIN 000-000-000-00000</Text>
+                    
                     <Text style={styles.orNo}>OR NO.: {receiptNumber}</Text>
                 </View>
                 {/* Table */}
